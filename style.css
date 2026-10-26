@@ -1,0 +1,173 @@
+/*
+ * style.css
+ * Custom styles that complement Tailwind CSS.
+ * Only styles that cannot be expressed cleanly via Tailwind utilities live here.
+ */
+
+/* ─── Custom scrollbar for the task list ─── */
+#task-list {
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #BFDBFE transparent;
+}
+#task-list::-webkit-scrollbar {
+  width: 5px;
+}
+#task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+#task-list::-webkit-scrollbar-thumb {
+  background-color: #BFDBFE;
+  border-radius: 99px;
+}
+
+/* ─── Filter tab buttons ─── */
+.filter-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #6B7280;         /* gray-500 */
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+.filter-btn:hover {
+  background: #EFF6FF;    /* blue-50 */
+  color: #1D4ED8;         /* brand-blue */
+}
+.filter-btn.active-filter {
+  background: #EFF6FF;
+  color: #1D4ED8;
+  border-color: #BFDBFE;  /* blue-200 */
+  font-weight: 600;
+}
+
+/* ─── Count badge inside filter tabs ─── */
+.filter-count {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #9CA3AF;           /* gray-400 — muted by default */
+  transition: color 0.18s;
+}
+.filter-btn:hover .filter-count,
+.filter-btn.active-filter .filter-count {
+  color: #1D4ED8;           /* inherit brand-blue when tab is active/hovered */
+}
+
+/* ─── Task item entrance animation ─── */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.task-item {
+  animation: slideIn 0.2s ease both;
+}
+
+/* ─── Strike-through for completed task text ─── */
+.task-text.completed {
+  text-decoration: line-through;
+  color: #9CA3AF; /* gray-400 */
+}
+
+/* ─── Modal overlay ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);  /* slate-900 @ 45% */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 50;
+  /* fade in/out managed via JS toggling .hidden */
+  animation: fadeIn 0.15s ease both;
+}
+.modal-overlay.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── Modal box entrance ─── */
+.modal-box {
+  animation: scaleIn 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Checkbox custom look ─── */
+.task-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1.1rem;
+  height: 1.1rem;
+  min-width: 1.1rem;
+  border: 2px solid #D1D5DB;  /* gray-300 */
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  position: relative;
+  background: white;
+}
+.task-checkbox:checked {
+  background: #1D4ED8;        /* brand-blue */
+  border-color: #1D4ED8;
+}
+/* Checkmark via pseudo-element */
+.task-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  width: 4px;
+  height: 7px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.task-checkbox:focus-visible {
+  outline: 2px solid #93C5FD;
+  outline-offset: 2px;
+}
+
+/* ─── Action icon buttons inside task items ─── */
+.task-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.task-action-btn.edit {
+  color: #6B7280;
+}
+.task-action-btn.edit:hover {
+  background: #EFF6FF;
+  color: #1D4ED8;
+}
+.task-action-btn.delete {
+  color: #6B7280;
+}
+.task-action-btn.delete:hover {
+  background: #FFF7ED;
+  color: #F97316;
+}

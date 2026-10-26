@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task List</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Custom Tailwind config: extend with brand colors -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                blue:      "#1D4ED8",
+                "blue-lt": "#EFF6FF",
+                orange:    "#F97316",
+                "orange-lt":"#FFF7ED",
+              },
+            },
+            boxShadow: {
+              card: "0 4px 24px 0 rgba(29,78,216,0.08)",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Custom stylesheet (animations, scrollbar, etc.) -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 flex flex-col items-center py-10 px-4">
+
+    <!-- ========== HEADER ========== -->
+    <header class="w-full max-w-xl mb-8 text-center">
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <!-- Checkmark icon (inline SVG) -->
+        <svg class="w-8 h-8 text-brand-blue" fill="none" stroke="currentColor" stroke-width="2.5"
+             viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h1 class="text-3xl font-extrabold text-brand-blue tracking-tight">Task List</h1>
+      </div>
+      <p class="text-sm text-gray-400">Kelola aktivitas harianmu dengan mudah &amp; terstruktur</p>
+    </header>
+
+    <!-- ========== MAIN CARD ========== -->
+    <main class="w-full max-w-xl">
+      <div class="bg-white rounded-2xl shadow-card p-6 flex flex-col gap-6">
+
+        <!-- ADD TASK FORM -->
+        <form id="task-form" class="flex gap-2" novalidate aria-label="Tambah task baru">
+          <input
+            id="task-input"
+            type="text"
+            maxlength="120"
+            placeholder="Tambahkan task baru…"
+            autocomplete="off"
+            class="flex-1 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700
+                   placeholder-gray-400 outline-none transition
+                   focus:border-brand-blue focus:bg-white focus:ring-2 focus:ring-brand-blue/20"
+            aria-label="Nama task"
+            required
+          />
+          <button
+            type="submit"
+            class="flex items-center gap-1.5 rounded-xl bg-brand-blue px-4 py-2.5 text-sm font-semibold
+                   text-white shadow-sm transition hover:bg-blue-700 active:scale-95 focus:outline-none
+                   focus:ring-2 focus:ring-brand-blue/40"
+            aria-label="Tambah task"
+          >
+            <!-- Plus icon -->
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
+                 viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Tambah
+          </button>
+        </form>
+
+        <!-- FILTER TABS -->
+        <div class="flex gap-2 border-b border-gray-100 pb-1" role="tablist" aria-label="Filter task">
+          <button data-filter="all"       role="tab" aria-selected="true"  class="filter-btn active-filter">Semua <span id="count-all"       class="filter-count"></span></button>
+          <button data-filter="active"    role="tab" aria-selected="false" class="filter-btn">Aktif <span id="count-active"    class="filter-count"></span></button>
+          <button data-filter="completed" role="tab" aria-selected="false" class="filter-btn">Selesai <span id="count-completed" class="filter-count"></span></button>
+        </div>
+
+        <!-- TASK LIST -->
+        <ul id="task-list" class="flex flex-col gap-2 min-h-[60px]" aria-live="polite" aria-label="Daftar task">
+          <!-- Task items will be injected here by script.js -->
+        </ul>
+
+        <!-- FOOTER: task counter + clear completed -->
+        <footer class="flex items-center justify-between text-xs text-gray-400 pt-2 border-t border-gray-100">
+          <span id="task-counter">0 task tersisa</span>
+          <button
+            id="clear-completed-btn"
+            class="text-brand-orange hover:text-orange-600 font-medium transition focus:outline-none
+                   focus:underline hidden"
+            aria-label="Hapus semua task yang selesai"
+          >
+            Hapus yang selesai
+          </button>
+        </footer>
+
+      </div><!-- /card -->
+    </main>
+
+    <!-- ========== EDIT MODAL ========== -->
+    <div id="edit-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="bg-white rounded-2xl shadow-card w-full max-w-md p-6 flex flex-col gap-4 modal-box">
+        <h2 id="modal-title" class="text-base font-bold text-gray-700">Edit Task</h2>
+        <input
+          id="edit-input"
+          type="text"
+          maxlength="120"
+          class="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700
+                 outline-none transition focus:border-brand-blue focus:bg-white focus:ring-2 focus:ring-brand-blue/20"
+          aria-label="Edit nama task"
+        />
+        <div class="flex gap-3 justify-end">
+          <button id="modal-cancel"
+            class="rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-500
+                   hover:bg-gray-50 transition focus:outline-none focus:ring-2 focus:ring-gray-200">
+            Batal
+          </button>
+          <button id="modal-save"
+            class="rounded-xl bg-brand-blue px-4 py-2 text-sm font-semibold text-white shadow-sm
+                   hover:bg-blue-700 transition active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-blue/40">
+            Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
